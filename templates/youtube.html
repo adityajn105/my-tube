@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <title> MyTube | No one can can stop you from watching youtube videos.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="//fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <style>
+      .footer {
+        margin:1%;
+        padding:2%;
+        left: 0%
+        bottom: 0;
+        width: 100%;
+        border-radius: 2%; 
+        background-color: #121c25;
+        color: white;
+        text-align: center;
+      }
+    </style>
+   <body>
+     <nav class="navbar navbar-inverse">
+         <div class="container-fluid">
+             <div class="navbar-header">
+                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                 </button>
+                 <a class="navbar-brand" href="/">MyTube</a>
+             </div>
+             <div class="collapse navbar-collapse" id="myNavbar">
+                 <ul class="nav navbar-nav">
+                     <li><a target="_blank" href="https://youtube.com">Go to Youtube</a></li>
+                     <li><a href="#" data-toggle="popover" title="Hint" 
+                      data-content="link/code to play video without register">Hint</a></li>
+                 </ul>
+                 <form class="navbar-form navbar-left" target="_blank" action="https://www.google.com/search">
+                     <div class="input-group">
+                         <input type="text" class="form-control" target="_blank" name="q" placeholder="Search Video on Google">
+                         <input type="hidden" name="tbm" value="vid">
+                         <div class="input-group-btn">
+                             <button class="btn btn-default" type="submit">
+                                 <i class="glyphicon glyphicon-search"></i>
+                             </button>
+                         </div>
+                     </div>
+                 </form>
+                 <ul class="nav navbar-nav navbar-right">
+                    {% if data.login %}
+                      <li><a href='/logout'>Logout</a></li>
+                    {% endif %}
+                    <li><a href="https://adityajn105.github.io">About</a></li>
+                 </ul>
+             </div>
+         </div>
+     </nav>
+     <div class="container-fluid">
+       <div class="row" >
+         <div class="col-md-8">
+           <h2>{{data.title}}</h2>
+           <iframe width="800" height="460"
+           src="https://www.youtube.com/embed/{{data.vid}}?feature=oembed" frameborder="0"
+           gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+         </div>
+         <div class="col-md-4">
+           {% if data.login %}
+             <h2>Welcome {{data.login}},</h2>
+             <div class="well well-lg" style="background:#121c25;padding:1%;padding-left:3%;margin:0%">
+             <h4 style="color:white">Your Playlist
+              <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal"
+                 >Add Video to playlist</button> </h4>
+             </div>
+             <div class="well well-lg" style="background:#121c25;padding:3%;overflow: auto;max-height:400px;">
+
+                 <div id="myModal" class="modal fade" role="dialog">
+                   <div class="modal-dialog">
+                     <div class="modal-content">
+                       <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal">&times;</button>
+                         <h4 class="modal-title">Add your Youtube Video to Playlist</h4>
+                       </div>
+                       <div class="modal-body">
+
+                         <form action="/add" method='post' >
+                           <div class="form-group">
+                             <label for="code">Video Code:</label>
+                             <input type="text" class="form-control" id="code" name="code">
+                           </div>
+                           <div class="form-group">
+                             <label for="title">Title:</label>
+                             <input type="text" class="form-control" id="title" name="title">
+                           </div>
+                           <button type="submit" class="btn btn-default">Add To Playlist</button>
+                         </form>
+
+                       </div>
+                       <div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                       </div>
+                     </div>
+
+                   </div>
+                 </div>
+               {% if data.list %}
+                 {% for k,v in data.list.items() %}
+                 <a href="/{{k}}">
+                   <div class="well well-sm" style="padding:1%;padding-left:2%;margin:1%;background:darkgray">
+                     <h5 style="color:white;"> {{v[:50]}} </h5>
+                   </div>
+                 </a>
+                 {% endfor %}
+               {% endif %}
+
+            {% else %}
+
+            <h3>Please login:</h3>
+            {% if data.error %}
+            <div class="alert alert-danger alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>{{data.error}}
+            </div>
+            {% endif %}
+            <form action="/login" class="well well-lg"  method='post' style="background:#121c25;padding:3%" >
+              <div class="form-group">
+                <label style="color:white" for="uname">Username:</label>
+                <input type="text" class="form-control" id="uname" name="uname">
+              </div>
+              <div class="form-group">
+                <label style="color:white" for="pwd">Password:</label>
+                <input type="password" class="form-control" id="pwd" name="pwd">
+              </div>
+              <button type="submit" class="btn btn-default">Login</button>
+            </form>
+
+            <h3>Not Registered:</h3>
+            <form action="/register" class="well well-lg" method='post' style="background:#121c25;padding:3%" >
+              <div class="form-group">
+                <label style="color:white" for="uname">Username:</label>
+                <input type="text" class="form-control" id="uname" name="uname">
+              </div>
+              <div class="form-group">
+                <label style="color:white" for="pwd">Password:</label>
+                <input type="password" class="form-control" id="pwd" name="pwd">
+              </div>
+              <button type="submit" class="btn btn-default">Register</button>
+            </form>
+            {% endif %}
+
+           </div>
+         </div>
+       </div>
+      </div>
+      <div class="row col-md-12">
+          <div class="footer">
+             <ul>
+                <li style="display:inline;letter-spacing:10px;font-size:200%;"><a href="https://adityajn105.githib.io" target="_blank"><i class="fa fa-chrome"></i></a></li>
+                <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://github.com/adityajn105" target="_blank"><i class="fa fa-github"></i></a></li>
+                <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://linkedin.com/in/adityajn105" target="_blank"><i class="fa fa-linkedin-square"></i></a></li>
+                <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://www.instagram.com/adityajn105/" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://twitter.com/adityajn105" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                <h3 style="font-size: 100%">Copyright © 2019 Aditya Jain</h3>
+              </ul>
+          </div>
+       </div>
+
+   </body>
+   <script>
+    $(document).ready(function(){
+      $('[data-toggle="popover"]').popover(); 
+    });
+</script>
+</html>
