@@ -16,7 +16,7 @@ You will need Python 3.X.X with some packages which you can install direclty usi
 Use the following command to run the app it uses port 5000 by default.
 > python3 app.py
 
-## Acknowledements
+## Built With
 * Flask
 * Bootstrap
 * HTML5
