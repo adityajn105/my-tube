@@ -35,16 +35,36 @@ def login(uname,pwd):
 
 @app.route('/')
 def home():
+    vid = request.args.get('url', None)
+    playlist = request.args.get('playlist', None)
+    if vid==None and playlist==None:
+        vid = ""
+    else:
+        if playlist != None:
+            vid=''
+            if 'list=' in playlist:
+                playlist = playlist.split("list=")[1]
+                playlist = playlist.split('&')[0]
+            else:
+                playlist = playlist
+        elif "v=" in vid:
+            vid = vid.split('v=')[1]
+            vid = vid.split('&')[0]
+        else:
+            vid = vid
+
     if 'uname' in session:
         uname = session['uname']
         plist = getplaylist(uname)
-        if len(plist) > 0:
-            return render_template('youtube.html', data = {'vid':list(plist.keys())[0], 'title':list(dict(plist).values())[0],
-                'login':uname, 'list':plist} )
+        if playlist==None:
+            return render_template('youtube.html', data = {'vid':vid, 'playlist':None, 'title':'' ,'login':uname, 'list':plist} )
         else:
-            return render_template('youtube.html', data = {'vid':'', 'title':'' ,'login':uname, 'list':plist} )
+            return render_template('youtube.html', data = {'playlist':playlist, 'vid':'',  'title':'' ,'login':uname, 'list':plist} )
     else:
-        return render_template('youtube.html',data = {'vid':'', 'title':'', 'error':None,'login':None} )
+        if playlist == None:
+            return render_template('youtube.html',data = {'vid':vid, 'playlist' :None, 'title':'', 'error':None,'login':None} )
+        else:
+            return render_template('youtube.html',data = {'playlist':playlist, 'vid':vid, 'title':'', 'error':None,'login':None} )
 
 @app.route('/logout')
 def logout():
@@ -61,10 +81,10 @@ def add():
         if code!="":
             updateplaylist(uname,code,title)
             plist = getplaylist(uname)
-            return render_template('youtube.html', data = {'vid':code, 'title':title, 'login':uname, 'list':plist} )
+            return render_template('youtube.html', data = {'vid':code, 'playlist':None, 'title':title, 'login':uname, 'list':plist} )
         else:
             session.pop('uname', None)
-            return render_template('youtube.html',data = {'vid':'', 'title':'', 'error':"Wrong Code!! Login Again and continue", 'login':None} )
+            return render_template('youtube.html',data = {'vid':'', 'playlist':None, 'title':'', 'error':"Wrong Code!! Login Again and continue", 'login':None} )
     else:
         return home()
 
@@ -78,7 +98,7 @@ def loginuser():
             session['uname'] = uname
             return home()
         else:
-            return render_template('youtube.html',data = {'vid':'','title':'','error':"Invalid Credentials", 'login':None} )
+            return render_template('youtube.html',data = {'vid':'','playlist':None,'title':'','error':"Invalid Credentials", 'login':None} )
     else:
         return home()
 
@@ -93,7 +113,7 @@ def registeruser():
             session['uname'] = uname
             return home()
         else:
-            return render_template('youtube.html',data = {'vid':'', 'title':'' ,'error':"Username already registered or invalid password.", 'login':None} )
+            return render_template('youtube.html',data = {'vid':'','playlist':None, 'title':'' ,'error':"Username already registered or invalid password.", 'login':None} )
     else:
         return home()
 
@@ -103,11 +123,11 @@ def playVideo(vid):
         uname = session['uname']
         plist = getplaylist(uname)
         if vid in plist.keys():
-            return render_template('youtube.html', data = {'vid':vid, 'title':plist[vid], 'login':uname, 'list':plist} )
+            return render_template('youtube.html', data = {'vid':vid,'playlist':None, 'title':plist[vid], 'login':uname, 'list':plist} )
         else:
-            return render_template('youtube.html', data = {'vid':vid, 'title':'Your Video', 'login':uname, 'list':plist} )
+            return render_template('youtube.html', data = {'vid':vid,'playlist':None, 'title':'Your Video', 'login':uname, 'list':plist} )
     else:
-        return render_template('youtube.html', data = {'vid':vid, 'title':'Your Video', 'login':None} )
+        return render_template('youtube.html', data = {'vid':vid,'playlist':None, 'title':'Your Video', 'login':None} )
 
 if __name__ == "__main__":
     if not os.path.isfile(usersfile):
@@ -117,4 +137,4 @@ if __name__ == "__main__":
         print("Creating Playlist Database!!")
         pkl.dump( dict(), open(playlist,'wb') )
     app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
-    app.run(host = '0.0.0.0',port = int(5000))
+    app.run(host = '0.0.0.0', debug=True, port = int(5000))

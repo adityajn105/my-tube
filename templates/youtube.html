@@ -2,9 +2,9 @@
 <html lang="en">
  <head>
     <meta charset="UTF-8">
-    <title> MyTube | No one can can stop you from watching youtube videos.</title>
+    <title> MyTube | No one can stop you from watching youtube videos.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -36,8 +36,33 @@
              <div class="collapse navbar-collapse" id="myNavbar">
                  <ul class="nav navbar-nav">
                      <li><a target="_blank" href="https://youtube.com">Go to Youtube</a></li>
-                     <li><a href="#" data-toggle="popover" title="Hint" 
-                      data-content="link/code to play video without register">Hint</a></li>
+                     <li> <a href="#" data-toggle="modal" data-target="#newfeat" style="color:#000000;background:#fa7a7a">New Features</a></li>
+                    <div class="modal fade" id="newfeat" role="dialog">
+					<div class="modal-dialog modal-lg">
+					  <!-- Modal content-->
+					  <div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">New Features included!!</h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+						  <p>Use direct youtube link to get your videos playing.</p>
+						  <code> https://adityajn105.pythonanywhere.com/?url=https://www.youtube.com/watch?v=I8f_9aPfWpA </code>
+                          <br>
+                          or
+                          <br>
+                          <code> https://adityajn105.pythonanywhere.com/?url=I8f_9aPfWpA </code>
+						  <br><br>
+						  <p>Now enjoy your playlist.</p>
+						  <code> https://adityajn105.pythonanywhere.com/?playlist=https://www.youtube.com/playlist?list=PLyORnIW1xT6waC0PNjAMj33FdK2ngL_ik </code>
+                          <br>or</br>
+                          <code>  https://adityajn105.pythonanywhere.com/?playlist=PLyORnIW1xT6waC0PNjAMj33FdK2ngL_ik </code>
+						  <br><br>
+						</div>
+						<div class="modal-footer"> <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> </div>
+					  </div>
+					</div>
+                    </div> 
                  </ul>
                  <form class="navbar-form navbar-left" target="_blank" action="https://www.google.com/search">
                      <div class="input-group">
@@ -63,9 +88,13 @@
        <div class="row" >
          <div class="col-md-8">
            <h2>{{data.title}}</h2>
-           <iframe width="800" height="460"
-           src="https://www.youtube.com/embed/{{data.vid}}?feature=oembed" frameborder="0"
-           gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            {% if data.playlist != None %}
+                <iframe width="800" height="460" src="https://www.youtube.com/embed/videoseries?list={{data.playlist}}" 
+                frameborder="0" gesture="media" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            {% else %}
+                <iframe width="800" height="460" src="https://www.youtube.com/embed/{{data.vid}}?feature=oembed" frameborder="0"
+                    gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            {% endif %}
          </div>
          <div class="col-md-4">
            {% if data.login %}
@@ -102,8 +131,6 @@
                        <div class="modal-footer">
                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                        </div>
-                     </div>
-
                    </div>
                  </div>
                {% if data.list %}
