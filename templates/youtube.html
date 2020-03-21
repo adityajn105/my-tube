@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title> MyTube | No one can stop you from watching youtube videos.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="//fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
     <style>
@@ -22,6 +22,7 @@
         text-align: center;
       }
     </style>
+ </head>
    <body>
      <nav class="navbar navbar-inverse">
          <div class="container-fluid">
@@ -46,18 +47,19 @@
 							<button type="button" class="close" data-dismiss="modal">&times;</button>
 						</div>
 						<div class="modal-body">
-						  <p>Use direct youtube link to get your videos playing.</p>
+						  <p>1. Use direct youtube link to get your videos playing.</p>
 						  <code> https://adityajn105.pythonanywhere.com/?url=https://www.youtube.com/watch?v=I8f_9aPfWpA </code>
                           <br>
                           or
                           <br>
                           <code> https://adityajn105.pythonanywhere.com/?url=I8f_9aPfWpA </code>
 						  <br><br>
-						  <p>Now enjoy your playlist.</p>
+						  <p>2. Now enjoy your playlist.</p>
 						  <code> https://adityajn105.pythonanywhere.com/?playlist=https://www.youtube.com/playlist?list=PLyORnIW1xT6waC0PNjAMj33FdK2ngL_ik </code>
                           <br>or</br>
                           <code>  https://adityajn105.pythonanywhere.com/?playlist=PLyORnIW1xT6waC0PNjAMj33FdK2ngL_ik </code>
-						  <br><br>
+              <br><br>
+              <p>3. You can remove your saved video.</p>
 						</div>
 						<div class="modal-footer"> <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> </div>
 					  </div>
@@ -87,15 +89,17 @@
      <div class="container-fluid">
        <div class="row" >
          <div class="col-md-8">
-           <h2>{{data.title}}</h2>
-            {% if data.playlist != None %}
-                <iframe width="800" height="460" src="https://www.youtube.com/embed/videoseries?list={{data.playlist}}" 
-                frameborder="0" gesture="media" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            {% else %}
-                <iframe width="800" height="460" src="https://www.youtube.com/embed/{{data.vid}}?feature=oembed" frameborder="0"
-                    gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-            {% endif %}
-         </div>
+            <div style="max-width:100%; height: calc(100vh - 16px);" >
+              <h2>{{data.title}}</h2>
+               {% if data.playlist != None %}
+                   <iframe style="width:100%;padding-bottom: 15%;height: 100%;" src="https://www.youtube.com/embed/videoseries?list={{data.playlist}}" 
+                   frameborder="0" gesture="media" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+               {% else %}
+                   <iframe style="width:100%;padding-bottom: 15%;height: 100%;" src="https://www.youtube.com/embed/{{data.vid}}?feature=oembed" frameborder="0"
+                       gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+               {% endif %}
+            </div>
+        </div>
          <div class="col-md-4">
            {% if data.login %}
              <h2>Welcome {{data.login}},</h2>
@@ -104,45 +108,47 @@
               <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal"
                  >Add Video to playlist</button> </h4>
              </div>
+             <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Add your Youtube Video to Playlist</h4>
+                    </div>
+                    <div class="modal-body">
+
+                      <form action="/add" method='post' >
+                        <div class="form-group">
+                          <label for="code">Video Code:</label>
+                          <input type="text" class="form-control" id="code" name="code">
+                        </div>
+                        <div class="form-group">
+                          <label for="title">Title:</label>
+                          <input type="text" class="form-control" id="title" name="title">
+                        </div>
+                        <button type="submit" class="btn btn-default">Add To Playlist</button>
+                      </form>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+              </div>
+              </div>
              <div class="well well-lg" style="background:#121c25;padding:3%;overflow: auto;max-height:400px;">
-
-                 <div id="myModal" class="modal fade" role="dialog">
-                   <div class="modal-dialog">
-                     <div class="modal-content">
-                       <div class="modal-header">
-                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                         <h4 class="modal-title">Add your Youtube Video to Playlist</h4>
-                       </div>
-                       <div class="modal-body">
-
-                         <form action="/add" method='post' >
-                           <div class="form-group">
-                             <label for="code">Video Code:</label>
-                             <input type="text" class="form-control" id="code" name="code">
-                           </div>
-                           <div class="form-group">
-                             <label for="title">Title:</label>
-                             <input type="text" class="form-control" id="title" name="title">
-                           </div>
-                           <button type="submit" class="btn btn-default">Add To Playlist</button>
-                         </form>
-
-                       </div>
-                       <div class="modal-footer">
-                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                       </div>
-                   </div>
-                 </div>
                {% if data.list %}
                  {% for k,v in data.list.items() %}
                  <a href="/{{k}}">
-                   <div class="well well-sm" style="padding:1%;padding-left:2%;margin:1%;background:darkgray">
+                   <div class="col-md-11 well well-sm" style="padding:1%;background:darkgray">
                      <h5 style="color:white;"> {{v[:50]}} </h5>
                    </div>
-                 </a>
+                </a>
+                <div class="col-md-1" style="padding:1%;">
+                    <a href="/remove/{{k}}"><i class="fa fa-3x fa-remove" style="color:#fa7a7a;"></i></a>
+                </div>
                  {% endfor %}
                {% endif %}
-
             {% else %}
 
             <h3>Please login:</h3>
@@ -176,7 +182,6 @@
               <button type="submit" class="btn btn-default">Register</button>
             </form>
             {% endif %}
-
            </div>
          </div>
        </div>
@@ -184,7 +189,7 @@
       <div class="row col-md-12">
           <div class="footer">
              <ul>
-                <li style="display:inline;letter-spacing:10px;font-size:200%;"><a href="https://adityajn105.githib.io" target="_blank"><i class="fa fa-chrome"></i></a></li>
+                <li style="display:inline;letter-spacing:10px;font-size:200%;"><a href="https://adityajain.me" target="_blank"><i class="fa fa-chrome"></i></a></li>
                 <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://github.com/adityajn105" target="_blank"><i class="fa fa-github"></i></a></li>
                 <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://linkedin.com/in/adityajn105" target="_blank"><i class="fa fa-linkedin-square"></i></a></li>
                 <li style="display:inline;letter-spacing:10px;font-size:200%"><a href="https://www.instagram.com/adityajn105/" target="_blank"><i class="fa fa-instagram"></i></a></li>

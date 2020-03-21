@@ -14,6 +14,15 @@ def updateplaylist(user,code,title):
     ls[user][code] = title
     pkl.dump(ls,open(playlist,'wb'))
 
+def removeVideo(user,code):
+    ls = pkl.load(open(playlist,'rb'))
+    if code not in ls[user]:
+        return False
+    else:
+        ls[user].pop(code)
+        pkl.dump(ls,open(playlist,'wb'))
+        return True
+
 def register(uname,pwd):
     users = pkl.load(open(usersfile,'rb'))
     if uname in users.keys() or pwd == '':
@@ -41,6 +50,7 @@ def home():
         vid = ""
     else:
         if playlist != None:
+            print(playlist)
             vid=''
             if 'list=' in playlist:
                 playlist = playlist.split("list=")[1]
@@ -57,9 +67,12 @@ def home():
         uname = session['uname']
         plist = getplaylist(uname)
         if playlist==None:
+            if vid=='' and len(plist) != 0:
+                vid = list(plist.keys())[0]
+                return render_template('youtube.html', data = {'vid':vid, 'playlist':None, 'title':plist[vid], 'login':uname, 'list':plist} )
             return render_template('youtube.html', data = {'vid':vid, 'playlist':None, 'title':'' ,'login':uname, 'list':plist} )
         else:
-            return render_template('youtube.html', data = {'playlist':playlist, 'vid':'',  'title':'' ,'login':uname, 'list':plist} )
+            return render_template('youtube.html', data = {'playlist':playlist, 'vid':vid,  'title':'' ,'login':uname, 'list':plist} )
     else:
         if playlist == None:
             return render_template('youtube.html',data = {'vid':vid, 'playlist' :None, 'title':'', 'error':None,'login':None} )
@@ -85,6 +98,17 @@ def add():
         else:
             session.pop('uname', None)
             return render_template('youtube.html',data = {'vid':'', 'playlist':None, 'title':'', 'error':"Wrong Code!! Login Again and continue", 'login':None} )
+    else:
+        return home()
+
+@app.route('/remove/<code>',methods= ['GET'])
+def remove(code):
+    if 'uname' in session:
+        if removeVideo(session['uname'], code):
+            return home()
+        else:
+            session.pop('uname')
+            return home()
     else:
         return home()
 
@@ -137,4 +161,4 @@ if __name__ == "__main__":
         print("Creating Playlist Database!!")
         pkl.dump( dict(), open(playlist,'wb') )
     app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
-    app.run(host = '0.0.0.0', debug=True, port = int(5000))
+    app.run(host = '0.0.0.0', port = int(5000))
